@@ -6,7 +6,6 @@ ruby File.read(".ruby-version").strip
 gem "rake"
 gem "faraday", "0.11.0"
 gem "pry"
-gem "pry-byebug"
 
 group :test do
   gem "rspec", "3.5.0"
