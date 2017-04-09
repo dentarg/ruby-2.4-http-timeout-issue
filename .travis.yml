@@ -17,6 +17,8 @@ rvm:
 before_install:
   - travis_retry gem update --system
   - gem --version
+  - sed -i '/^ruby /,+1d' Gemfile # To be able to test arbitrary Ruby versions without Bundler complaining
+  - gem install bundler
   - travis_retry wget -O toxiproxy-2.1.0.deb https://github.com/Shopify/toxiproxy/releases/download/v2.1.0/toxiproxy_2.1.0_amd64.deb
   - travis_retry sudo dpkg -i toxiproxy-2.1.0.deb
   - travis_retry sudo service toxiproxy start
