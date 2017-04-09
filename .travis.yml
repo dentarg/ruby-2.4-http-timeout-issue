@@ -1,0 +1,25 @@
+language: ruby
+cache: bundler
+
+# https://docs.travis-ci.com/user/trusty-ci-environment/
+dist: trusty
+sudo: required
+group: beta
+
+rvm:
+  - jruby-9.1.8.0
+  - 2.2.7
+  - 2.3.4
+  - 2.4.1
+  - jruby-head
+  - ruby-head
+
+before_install:
+  - travis_retry gem update --system
+  - gem --version
+  - travis_retry wget -O toxiproxy-2.1.0.deb https://github.com/Shopify/toxiproxy/releases/download/v2.1.0/toxiproxy_2.1.0_amd64.deb
+  - travis_retry sudo dpkg -i toxiproxy-2.1.0.deb
+  - travis_retry sudo service toxiproxy start
+
+notifications:
+  email: false
