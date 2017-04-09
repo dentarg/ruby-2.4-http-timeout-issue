@@ -1,5 +1,7 @@
 # Ruby 2.4 http timeout issue
 
+[![Build Status](https://travis-ci.org/dentarg/ruby-2.4-http-timeout-issue.svg?branch=master)](https://travis-ci.org/dentarg/ruby-2.4-http-timeout-issue)
+
     brew install toxiproxy
     brew services start toxiproxy
 <!-- -->
