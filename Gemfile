@@ -14,5 +14,5 @@ end
 
 group :test, :development do
   gem "vcr", "3.0.3"
-  gem "webmock", "2.3.2"
+  gem "webmock", git: "https://github.com/bblimke/webmock.git"
 end
