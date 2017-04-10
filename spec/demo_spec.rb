@@ -3,6 +3,7 @@
 $DEBUG = true
 
 require "faraday"
+require "net/http"
 require "rspec"
 require "toxiproxy"
 require "vcr"
@@ -55,22 +56,29 @@ RSpec.configure do |conf|
 end
 
 class HTTP
-  def self.get(url)
+  def self.get(url, timeout:)
     http_client = Faraday.new do |faraday|
       faraday.adapter Faraday.default_adapter
     end
 
     http_client.get do |request|
       request.url(url)
-      request.options.timeout = 0.1
+      request.options.timeout = timeout
     end
   end
 end
 
-RSpec.describe HTTP do
-  subject { described_class.get(url) }
+class NetHTTP
+  def self.get(url, timeout:)
+    uri = URI(url)
+    http_client = Net::HTTP.new(uri.host, uri.port)
+    http_client.read_timeout = timeout
+    http_client.get(uri)
+  end
+end
 
-  describe ".get" do
+RSpec.describe "HTTP" do
+  describe "GET" do
     let(:example_timeout) { 1.0 }
 
     before do
@@ -96,8 +104,12 @@ RSpec.describe HTTP do
           end
         end
 
-        it "times out after a certain amount of time" do
-          expect { subject }.to raise_error(Faraday::TimeoutError)
+        it "times out after a certain amount of time (Faraday)" do
+          expect { HTTP.get(url, timeout: 0.1) }.to raise_error(Faraday::TimeoutError)
+        end
+
+        it "times out after a certain amount of time (Net::HTTP)" do
+          expect { NetHTTP.get(url, timeout: 0.1) }.to raise_error(Net::ReadTimeout)
         end
       end
     end
