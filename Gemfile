@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 source "https://rubygems.org"
 
-ruby File.read(".ruby-version").strip
+ruby RUBY_VERSION
 
 gem "rake"
 gem "faraday", "0.11.0"
