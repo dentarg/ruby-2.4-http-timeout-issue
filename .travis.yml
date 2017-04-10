@@ -24,5 +24,7 @@ before_install:
   - travis_retry sudo dpkg -i toxiproxy-2.1.0.deb
   - travis_retry sudo service toxiproxy start
 
+script:
+  - bundle exec rspec
 notifications:
   email: false
