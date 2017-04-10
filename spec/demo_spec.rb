@@ -55,26 +55,6 @@ RSpec.configure do |conf|
   conf.order = :random
 end
 
-module Settings
-  module_function
-
-  extend SingleForwardable
-
-  def_single_delegator :configuration, :http_timeout
-  def_single_delegator :configuration, :http_connection_open_timeout
-
-  def configuration
-    @configuration ||= OpenStruct.new(
-      http_timeout: 25,
-      http_connection_open_timeout: 10
-    )
-  end
-
-  def configure
-    yield configuration
-  end
-end
-
 class HTTP
   def self.get(url)
     http_client = Faraday.new do |faraday|
@@ -83,8 +63,7 @@ class HTTP
 
     http_client.get do |request|
       request.url(url)
-      request.options.timeout = Settings.http_timeout
-      request.options.open_timeout = Settings.http_connection_open_timeout
+      request.options.timeout = 0.1
     end
   end
 end
@@ -98,7 +77,6 @@ RSpec.describe HTTP do
     before do
       WebMock.allow_net_connect!
       VCR.turn_off!
-      @original_configuration = Settings.configuration.dup
     end
 
     after do
@@ -111,18 +89,6 @@ RSpec.describe HTTP do
       let(:url)       { "http://#{ToxiproxyConfig.downstream(toxiproxy)}/" }
 
       describe "open/read timeout" do
-        before do
-          Settings.configure do |config|
-            config.http_timeout = 0.1
-          end
-        end
-
-        after(:example) do
-          Settings.configure do |config|
-            config.http_timeout = @original_configuration.http_timeout
-          end
-        end
-
         around do |example|
           Toxiproxy[toxiproxy].toxic(:timeout, timeout: 0).apply do
             Timeout.timeout(example_timeout) do
