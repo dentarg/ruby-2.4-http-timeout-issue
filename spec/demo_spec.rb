@@ -30,7 +30,6 @@ end
 VCR.configure do |conf|
   conf.cassette_library_dir = "./spec/vcr_cassettes"
   conf.hook_into :webmock
-  conf.configure_rspec_metadata!
 
   conf.ignore_request do |request|
     request.uri.start_with?("http://127.0.0.1:8474/") # toxiproxy-server
